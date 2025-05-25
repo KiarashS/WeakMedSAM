@@ -143,7 +143,7 @@ def get_dataset(
 
     train_dataset = BraTSDataset(
         *get_files(
-            sample_name.strip() for sample_name in open("brats/splits/train.txt", "r")
+            sample_name.strip() for sample_name in open("WeakMedSAM/brats/splits/train.txt", "r")
         ),
         True,
         child_classes,
@@ -151,7 +151,7 @@ def get_dataset(
     )
     val_dataset = BraTSDataset(
         *get_files(
-            sample_name.strip() for sample_name in open("brats/splits/val.txt", "r")
+            sample_name.strip() for sample_name in open("WeakMedSAM/brats/splits/val.txt", "r")
         ),
         False,
         0,
@@ -159,7 +159,7 @@ def get_dataset(
     )
     test_dataset = BraTSDataset(
         *get_files(
-            sample_name.strip() for sample_name in open("brats/splits/test.txt", "r")
+            sample_name.strip() for sample_name in open("WeakMedSAM/brats/splits/test.txt", "r")
         ),
         False,
         0,
@@ -189,9 +189,9 @@ def get_all_dataset(data_path: str, child_classes: int, cluster_file: str) -> Da
         *get_files(
             sample_name.strip()
             for sample_name in (
-                list(open("brats/splits/train.txt", "r"))
-                + list(open("brats/splits/val.txt", "r"))
-                + list(open("brats/splits/test.txt", "r"))
+                list(open("WeakMedSAM/brats/splits/train.txt", "r"))
+                + list(open("WeakMedSAM/brats/splits/val.txt", "r"))
+                + list(open("WeakMedSAM/brats/splits/test.txt", "r"))
             )
         ),
         False,
@@ -262,21 +262,21 @@ def get_seg_dataset(data_path: str, lab_path: str = None) -> tuple[Dataset, Data
 
     train_dataset = BraTSSegDataset(
         *get_files(
-            sample_name.strip() for sample_name in open("brats/splits/train.txt", "r")
+            sample_name.strip() for sample_name in open("WeakMedSAM/brats/splits/train.txt", "r")
         ),
         lab_path,
         True,
     )
     val_dataset = BraTSSegDataset(
         *get_files(
-            sample_name.strip() for sample_name in open("brats/splits/val.txt", "r")
+            sample_name.strip() for sample_name in open("WeakMedSAM/brats/splits/val.txt", "r")
         ),
         lab_path,
         False,
     )
     test_dataset = BraTSSegDataset(
         *get_files(
-            sample_name.strip() for sample_name in open("brats/splits/test.txt", "r")
+            sample_name.strip() for sample_name in open("WeakMedSAM/brats/splits/test.txt", "r")
         ),
         lab_path,
         False,
