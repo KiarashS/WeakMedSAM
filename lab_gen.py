@@ -34,13 +34,14 @@ def worker(rank, subsets, gpus, args):
     if args.samus_ckpt:
         checkpoint = torch.load(args.samus_ckpt)
         model.load_state_dict(checkpoint)
-    model = model.cuda()
+    #model = model.cuda()
     model.eval()
 
     pbar = tqdm(enumerate(sub_loader), total=len(sub_loader), desc=f"Rank: {rank}")
     with torch.no_grad():
         for i, pack in pbar:
-            imgs = pack["img"].cuda()
+            #imgs = pack["img"].cuda()
+            imgs = pack["img"]
             idxs = pack["idx"]
 
             x, _, cam = model(imgs)
