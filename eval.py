@@ -25,7 +25,8 @@ def main():
 
     model = UNet(n_channels=1, n_classes=args.num_classes, bilinear=True)
     model.load_state_dict(torch.load(args.ckpt))
-    model = torch.nn.DataParallel(model).cuda()
+    #model = torch.nn.DataParallel(model).cuda()
+    model = torch.nn.DataParallel(model)
     model.eval()
 
     data_module = importlib.import_module(f"{args.data_module}.dataset")
@@ -46,8 +47,10 @@ def main():
 
     for datapack in tqdm(test_loader, total=len(test_loader)):
 
-        imgs = datapack["img"].cuda()
-        segs = datapack["seg"].cuda()
+        #imgs = datapack["img"].cuda()
+        #segs = datapack["seg"].cuda()
+        imgs = datapack["img"]
+        segs = datapack["seg"]
 
         with autocast():
             with torch.no_grad():
