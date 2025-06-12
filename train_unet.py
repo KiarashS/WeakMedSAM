@@ -36,12 +36,16 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpus
 
     torch.manual_seed(args.seed)
-    torch.cuda.manual_seed(args.seed)
+    #torch.cuda.manual_seed(args.seed)
+    torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = True
 
+    #model = torch.nn.DataParallel(
+    #    UNet(n_channels=1, n_classes=args.num_classes, bilinear=True)
+    #).cuda()
     model = torch.nn.DataParallel(
         UNet(n_channels=1, n_classes=args.num_classes, bilinear=True)
-    ).cuda()
+    )
 
     data_module = importlib.import_module(f"{args.data_module}.dataset")
     train_dataset, val_dataset, _ = data_module.get_seg_dataset(
@@ -90,13 +94,17 @@ def main():
             train_loader_iter = iter(train_loader)
             datapack = next(train_loader_iter)
 
-        imgs = datapack["img"].cuda()
-        segs = datapack["seg"].cuda()
-        labs = datapack["lab"].cuda()
+        #imgs = datapack["img"].cuda()
+        #segs = datapack["seg"].cuda()
+        #labs = datapack["lab"].cuda()
+        imgs = datapack["img"]
+        segs = datapack["seg"]
+        labs = datapack["lab"]
 
         with autocast():
             x = model(imgs)
-            loss = cross_entropy(x, labs, weight=torch.tensor([10, 1]).cuda())
+            #loss = cross_entropy(x, labs, weight=torch.tensor([10, 1]).cuda())
+            loss = cross_entropy(x, labs, weight=torch.tensor([10, 1]))
 
         scaler.scale(loss).backward()
         scaler.step(optimizer)
@@ -120,8 +128,10 @@ def main():
             val_score = AverageMeter()
             with torch.no_grad():
                 for pack in val_loader:
-                    imgs = pack["img"].cuda()
-                    segs = pack["seg"].cuda()
+                    #imgs = pack["img"].cuda()
+                    #segs = pack["seg"].cuda()
+                    imgs = pack["img"]
+                    segs = pack["seg"]
                     with autocast():
                         x = model(imgs)
                         pred = (
