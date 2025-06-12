@@ -26,7 +26,8 @@ if __name__ == "__main__":
 
     os.makedirs(args.save_path, exist_ok=True)
 
-    resnet = resnet18(weights="DEFAULT").cuda()
+    #resnet = resnet18(weights="DEFAULT").cuda()
+    resnet = resnet18(weights="DEFAULT")
     resnet.fc = torch.nn.Identity()
     resnet.eval()
 
@@ -54,8 +55,9 @@ if __name__ == "__main__":
             idxs = pack["idx"]
             all_idx_list += idxs
 
-            features = resnet(imgs.cuda()).cpu().numpy()
-
+            #features = resnet(imgs.cuda()).cpu().numpy()
+            features = resnet(imgs).cpu().numpy()
+            
             for b, f in enumerate(features):
                 for c in range(args.parent_classes):
                     if lab[b, c] != 0:
