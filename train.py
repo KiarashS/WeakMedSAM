@@ -36,7 +36,8 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpus
 
     torch.manual_seed(args.seed)
-    torch.cuda.manual_seed(args.seed)
+    #torch.cuda.manual_seed(args.seed)
+    torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = True
 
     model = samus_model_registry["vit_b"](
@@ -44,7 +45,8 @@ def main():
         child_classes=args.child_classes,
         checkpoint=args.sam_ckpt,
     )
-    model = torch.nn.DataParallel(model).cuda()
+    #model = torch.nn.DataParallel(model).cuda()
+    model = torch.nn.DataParallel(model)
     if args.samus_ckpt:
         checkpoint = torch.load(args.samus_ckpt)
         model.load_state_dict(checkpoint)
@@ -96,9 +98,12 @@ def main():
             train_loader_iter = iter(train_loader)
             datapack = next(train_loader_iter)
 
-        imgs = datapack["img"].cuda()
-        parent_labs = datapack["plab"].cuda()
-        child_labs = datapack["clab"].cuda()
+        #imgs = datapack["img"].cuda()
+        #parent_labs = datapack["plab"].cuda()
+        #child_labs = datapack["clab"].cuda()
+        imgs = datapack["img"]
+        parent_labs = datapack["plab"]
+        child_labs = datapack["clab"]
 
         parent_x, child_x, _ = model(imgs)
 
@@ -133,8 +138,10 @@ def main():
             val_score = AverageMeter()
             with torch.no_grad():
                 for pack in val_loader:
-                    imgs = pack["img"].cuda()
-                    labs = pack["plab"].float().cuda()
+                    #imgs = pack["img"].cuda()
+                    #labs = pack["plab"].float().cuda()
+                    imgs = pack["img"]
+                    labs = pack["plab"].float()
                     x, _, _ = model(imgs)
                     val_loss.add(F.binary_cross_entropy_with_logits(x, labs).item())
                     pred = (torch.sigmoid(x) > 0.5).float()
